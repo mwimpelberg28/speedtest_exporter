@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/danopstech/speedtest_exporter/internal/exporter"
+	"github.com/mwimpelberg28/speedtest_exporter/internal/exporter"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
@@ -20,9 +20,10 @@ func main() {
 	port := flag.String("port", "9090", "listening port to expose metrics on")
 	serverID := flag.Int("server_id", -1, "Speedtest.net server ID to run test against, -1 will pick the closest server to your location")
 	serverFallback := flag.Bool("server_fallback", false, "If the server_id given is not available, should we fallback to closest available server")
+	timeout := flag.Duration("timeout", 120*time.Second, "maximum time to allow a full speedtest run to take before aborting")
 	flag.Parse()
 
-	exporter, err := exporter.New(*serverID, *serverFallback)
+	exporter, err := exporter.New(*serverID, *serverFallback, *timeout)
 	if err != nil {
 		panic(err)
 	}
